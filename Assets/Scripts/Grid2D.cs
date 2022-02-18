@@ -13,10 +13,11 @@ public class Grid2D : MonoBehaviour
     [SerializeField] private GameObject cellPrefab;
     [SerializeField] protected int width;
     [SerializeField] protected int height;
+    private bool isInitialized;
 
     private Cell[,] cells;
 
-    private void Start()
+    private void Awake()
     {
         if (cellPrefab.GetComponent<Cell>() == null)
         {
@@ -38,27 +39,28 @@ public class Grid2D : MonoBehaviour
                 Vector2 cellPos = new Vector2(i - width / 2, j - height / 2);
                 Cell cell = Instantiate(cellPrefab, cellPos, Quaternion.identity, transform).GetComponent<Cell>();
                 cell.SetPosition(i, j);
-                Debug.Log(i + " " + j); 
                 cells[i, j] = cell;
             }
         }
+
+        isInitialized = true;
     }
 
-    protected void UpdateCellState(Operation operation, int i, int j, CellState newState)
+    protected void UpdateCellState(Operation operation, int x, int y, CellState state)
     {
+        if (!isInitialized)
+        {
+            Debug.LogError("Grid is not initialized yet!", this);
+        }
+
         switch (operation)
         {
             case Operation.ADD:
-                cells[i, j].State |= newState;
+                cells[x, y].State |= state;
                 break;
             case Operation.SUBTRACT:
-                cells[i, j].State &= ~newState;
+                cells[x, y].State &= ~state;
                 break;
         }
-    }
-
-    protected Cell GetCell(int i, int j)
-    {
-        return cells[i, j];
     }
 }

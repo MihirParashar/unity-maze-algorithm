@@ -37,9 +37,12 @@ public class Cell : MonoBehaviour
     [SerializeField] private Color currentPositionColor;
     private SpriteRenderer spriteRenderer;
 
-    private void Start()
+    private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+    private void Start()
+    {
         Redraw();
     }
 
@@ -56,30 +59,30 @@ public class Cell : MonoBehaviour
         {
             Debug.LogError("Cell's position not initalized!", this);
         }
-        if (state.HasFlag(CellState.LEFT) && xPos == 0)
-        {
-            leftWall.SetActive(true);
-        }
-        if (state.HasFlag(CellState.RIGHT))
-        {
-            rightWall.SetActive(true);
-        }
-        if (state.HasFlag(CellState.TOP))
-        {
-            topWall.SetActive(true);
-        }
-        if (state.HasFlag(CellState.BOTTOM) && yPos == 0)
-        {
-            bottomWall.SetActive(true);
-        }
 
+        UpdateWalls();
+        UpdateColor();
+    }
+
+    private void UpdateWalls()
+    {
+        leftWall.SetActive(state.HasFlag(CellState.LEFT) && xPos == 0);
+        rightWall.SetActive(state.HasFlag(CellState.RIGHT));
+        topWall.SetActive(state.HasFlag(CellState.TOP));
+        bottomWall.SetActive(state.HasFlag(CellState.BOTTOM) && yPos == 0);
+    }
+
+    private void UpdateColor()
+    {
         if (state.HasFlag(CellState.CURRENT))
         {
             spriteRenderer.color = currentPositionColor;
-        } else if (state.HasFlag(CellState.VISITED))
+        }
+        else if (state.HasFlag(CellState.VISITED))
         {
             spriteRenderer.color = visitedColor;
-        } else
+        }
+        else
         {
             spriteRenderer.color = Color.white;
         }
