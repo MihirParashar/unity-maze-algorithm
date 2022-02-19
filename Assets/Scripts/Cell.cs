@@ -22,11 +22,6 @@ public class Cell : MonoBehaviour
         get { return state; }
         set { state = value; Redraw(); }
     }
-
-    private int xPos, yPos;
-
-    private bool positionInitialized;
-
     [Header("Walls")]
     [SerializeField] private GameObject leftWall;
     [SerializeField] private GameObject rightWall;
@@ -46,19 +41,7 @@ public class Cell : MonoBehaviour
         Redraw();
     }
 
-    public void SetPosition(int x, int y)
-    {
-        xPos = x;
-        yPos = y;
-        positionInitialized = true;
-    }
-
     private void Redraw() { 
-
-        if (!positionInitialized)
-        {
-            Debug.LogError("Cell's position not initalized!", this);
-        }
 
         UpdateWalls();
         UpdateColor();
@@ -66,10 +49,10 @@ public class Cell : MonoBehaviour
 
     private void UpdateWalls()
     {
-        leftWall.SetActive(state.HasFlag(CellState.LEFT) && xPos == 0);
+        leftWall.SetActive(state.HasFlag(CellState.LEFT));
         rightWall.SetActive(state.HasFlag(CellState.RIGHT));
         topWall.SetActive(state.HasFlag(CellState.TOP));
-        bottomWall.SetActive(state.HasFlag(CellState.BOTTOM) && yPos == 0);
+        bottomWall.SetActive(state.HasFlag(CellState.BOTTOM));
     }
 
     private void UpdateColor()
@@ -86,5 +69,12 @@ public class Cell : MonoBehaviour
         {
             spriteRenderer.color = Color.white;
         }
+    }
+
+    private void OnMouseDown()
+    {
+        state |= CellState.VISITED;
+        state &= ~CellState.RIGHT;
+        Redraw();
     }
 }
