@@ -13,7 +13,6 @@ public class Grid2D : MonoBehaviour
     [SerializeField] private GameObject cellPrefab;
     [SerializeField] protected int width;
     [SerializeField] protected int height;
-    private bool isInitialized;
 
     private Cell[,] cells;
 
@@ -43,17 +42,10 @@ public class Grid2D : MonoBehaviour
                 cells[i, j] = cell;
             }
         }
-
-        isInitialized = true;
     }
 
     protected void UpdateCellState(Operation operation, int x, int y, CellState state)
     {
-        if (!isInitialized)
-        {
-            Debug.LogError("Grid is not initialized yet!", this);
-        }
-
         switch (operation)
         {
             case Operation.ADD:
