@@ -11,10 +11,9 @@ public enum Operation
 public class Grid2D : MonoBehaviour
 {
     [SerializeField] private GameObject cellPrefab;
-    [SerializeField] protected int width;
-    [SerializeField] protected int height;
 
     private Cell[,] cells;
+    private Vector2Int currentPosition = new Vector2Int(0, 0);
 
     private void Awake()
     {
@@ -23,15 +22,11 @@ public class Grid2D : MonoBehaviour
             Debug.Log("Cell prefab specified does not contain the Cell script. Adding it manually...");
             cellPrefab.AddComponent<Cell>();
         }
-
-        Initialize();
     }
 
-    void Initialize()
+    protected void Initialize(int width, int height)
     {
         cells = new Cell[width, height];
-        float halfWidth = cellPrefab.transform.localScale.x / 2f;
-        float halfHeight = cellPrefab.transform.localScale.y / 2f;
 
         for (int i = 0; i < width; i++)
         {
@@ -44,17 +39,22 @@ public class Grid2D : MonoBehaviour
         }
     }
 
-    protected void UpdateCellState(Operation operation, int x, int y, CellState state)
+    protected void AddToCellState(Vector2Int pos, CellState stateToAdd)
     {
-        switch (operation)
-        {
-            case Operation.ADD:
-                cells[x, y].State |= state;
-                break;
-            case Operation.SUBTRACT:
-                cells[x, y].State &= ~state;
-                break;
-        }
+        cells[pos.x, pos.y].State |= stateToAdd;
+    }
+
+    protected void SubtractFromCellState(Vector2Int pos, CellState stateToSubtract)
+    {
+        cells[pos.x, pos.y].State &= ~stateToSubtract;
+    }
+
+    protected void SetCurrentPosition(Vector2Int newPos)
+    {
+        cells[currentPosition.x, currentPosition.y].State &= ~CellState.CURRENT;
+        cells[newPos.x, newPos.y].State |= CellState.CURRENT;
+
+        currentPosition = newPos;
     }
 
     protected Cell GetCell(int x, int y)
@@ -65,4 +65,15 @@ public class Grid2D : MonoBehaviour
     {
         return cells[pos.x, pos.y];
     }
+    protected void Reset()
+    {
+        if (cells == null) return;
+        foreach (Cell cell in cells)
+        {
+            Destroy(cell.gameObject);
+        }
+        cells = null;
+        currentPosition = new Vector2Int(0, 0);
+    }
+
 }

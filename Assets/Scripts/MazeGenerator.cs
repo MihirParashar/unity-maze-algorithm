@@ -20,13 +20,12 @@ public class MazeGenerator : Grid2D
     private Vector2Int topOffset = new Vector2Int(0, 1);
     private Vector2Int bottomOffset = new Vector2Int(0, -1);
 
-    private void Start()
+    public IEnumerator GenerateMaze(int width, int height, int seed, float tickInterval)
     {
-        StartCoroutine(GenerateMaze(width, height, Random.Range(int.MinValue, int.MaxValue)));
-    }
+        Reset();
 
-    private IEnumerator GenerateMaze(int width, int height, int seed)
-    {
+        Initialize(width, height);
+
         System.Random RNG = new System.Random(seed);
         Stack<Vector2Int> positions = new Stack<Vector2Int>();
         Vector2Int currentPos = new Vector2Int(0, 0);
@@ -36,22 +35,25 @@ public class MazeGenerator : Grid2D
         while (positions.Count > 0)
         {
             currentPos = positions.Pop();
-            UpdateCellState(Operation.ADD, currentPos.x, currentPos.y, CellState.VISITED | CellState.CURRENT);
+            SetCurrentPosition(currentPos);
+            AddToCellState(currentPos, CellState.VISITED);
 
             List<Neighbour> neighbours = GetUnvisitedNeighbours(currentPos, width, height);
 
             if (neighbours.Count > 0) {
                 Neighbour neighbour = GetRandomItem(neighbours, RNG);
 
-                UpdateCellState(Operation.SUBTRACT, currentPos.x, currentPos.y, GetOppositeWall(neighbour.sharedWall));
-                UpdateCellState(Operation.SUBTRACT, neighbour.pos.x, neighbour.pos.y, neighbour.sharedWall);
+                SubtractFromCellState(currentPos, GetOppositeWall(neighbour.sharedWall));
+                SubtractFromCellState(neighbour.pos, neighbour.sharedWall);
 
                 positions.Push(currentPos);
                 positions.Push(neighbour.pos);
             }
 
-            yield return new WaitForSeconds(0.05f);
-            UpdateCellState(Operation.SUBTRACT, currentPos.x, currentPos.y, CellState.CURRENT);
+            if (tickInterval > 0)
+            {
+                yield return new WaitForSeconds(tickInterval);
+            }
         }
     }
 
