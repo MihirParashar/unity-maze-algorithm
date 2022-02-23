@@ -62,6 +62,14 @@ public class SettingsUI : MonoBehaviour
         mazeCoroutine = StartCoroutine(mazeGenerator.GenerateMaze(width, height, seed, tickInterval));
     }
 
+    public void ExitApplication()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+        Application.Quit();
+    }
+
 
     void OnApplicationQuit()
     {
