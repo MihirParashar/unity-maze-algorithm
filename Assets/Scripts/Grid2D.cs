@@ -1,12 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
-public enum Operation
-{
-    ADD,
-    SUBTRACT
-}
 
 public class Grid2D : MonoBehaviour
 {
