@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 public class MazeGenerator : Grid2D
 {
+    private Vector2Int currentPosition;
+
     private struct Neighbour
     {
         public Vector2Int pos;
@@ -23,6 +25,7 @@ public class MazeGenerator : Grid2D
     public IEnumerator GenerateMaze(int width, int height, int seed, float tickInterval)
     {
         Reset();
+        currentPosition = new Vector2Int(0, 0);
 
         Initialize(width, height);
 
@@ -113,5 +116,14 @@ public class MazeGenerator : Grid2D
     private T GetRandomItem<T>(List<T> list, System.Random RNG)
     {
         return list[RNG.Next(0, list.Count)];
+    }
+
+
+    protected void SetCurrentPosition(Vector2Int newPos)
+    {
+        SubtractFromCellState(currentPosition, CellState.CURRENT);
+        AddToCellState(newPos, CellState.CURRENT);
+
+        currentPosition = newPos;
     }
 }

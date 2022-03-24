@@ -5,7 +5,6 @@ public class Grid2D : MonoBehaviour
     [SerializeField] private GameObject cellPrefab;
 
     private Cell[,] cells;
-    private Vector2Int currentPosition = new Vector2Int(0, 0);
 
     private void Awake()
     {
@@ -41,14 +40,6 @@ public class Grid2D : MonoBehaviour
         cells[pos.x, pos.y].State &= ~stateToSubtract;
     }
 
-    protected void SetCurrentPosition(Vector2Int newPos)
-    {
-        cells[currentPosition.x, currentPosition.y].State &= ~CellState.CURRENT;
-        cells[newPos.x, newPos.y].State |= CellState.CURRENT;
-
-        currentPosition = newPos;
-    }
-
     protected Cell GetCell(int x, int y)
     {
         return cells[x, y];
@@ -65,7 +56,6 @@ public class Grid2D : MonoBehaviour
             Destroy(cell.gameObject);
         }
         cells = null;
-        currentPosition = new Vector2Int(0, 0);
     }
 
 }
