@@ -4,7 +4,7 @@
 * text=auto
 
 # Ignore TM Pro for language detection so my repo doesn't get marked as "ShaderLab"
-Assets/TextMesh?Pro/* linguist-vendored
+Assets/TextMesh?Pro/** linguist-vendored
 
 ###############################################################################
 # Set default behavior for command prompt diff.
